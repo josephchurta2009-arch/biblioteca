@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Añadir Libro - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ url_for('manage_books') }}">Gestionar Libros</a></li>
+                <li class="breadcrumb-item active">Añadir Libro</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="fas fa-plus"></i> Añadir Nuevo Libro</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('add_book') }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Título *</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="author" class="form-label">Autor *</label>
+                                <input type="text" class="form-control" id="author" name="author" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="isbn" class="form-label">ISBN</label>
+                                <input type="text" class="form-control" id="isbn" name="isbn">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="publisher" class="form-label">Editorial</label>
+                                <input type="text" class="form-control" id="publisher" name="publisher">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="publication_year" class="form-label">Año de Publicación</label>
+                                <input type="number" class="form-control" id="publication_year" 
+                                       name="publication_year" min="1000" max="2025">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Categoría</label>
+                                <input type="text" class="form-control" id="category" name="category"
+                                       placeholder="Ej: Ficción, Ciencia, Historia...">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="total_copies" class="form-label">Número Total de Copias *</label>
+                        <input type="number" class="form-control" id="total_copies" name="total_copies" 
+                               min="1" value="1" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="description" name="description" rows="4"
+                                  placeholder="Descripción del libro, sinopsis, etc."></textarea>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{{ url_for('manage_books') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Guardar Libro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const title = document.getElementById('title').value.trim();
+        const author = document.getElementById('author').value.trim();
+        const totalCopies = document.getElementById('total_copies').value;
+        
+        if (!title || !author) {
+            e.preventDefault();
+            alert('Por favor, completa los campos obligatorios (Título y Autor).');
+            return false;
+        }
+        
+        if (totalCopies < 1) {
+            e.preventDefault();
+            alert('El número de copias debe ser al menos 1.');
+            return false;
+        }
+    });
+</script>
+{% endblock %}

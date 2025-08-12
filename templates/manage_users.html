@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Gestionar Usuarios - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <h1><i class="fas fa-users"></i> Gestionar Usuarios</h1>
+        <a href="{{ url_for('add_user') }}" class="btn btn-success mt-3">
+    <i class="fas fa-user-plus"></i> Agregar Usuario
+</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.full_name }}</td>
+                    <td>{{ user.username }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        <span class="badge {{ 'bg-primary' if user.role == 'admin' else 'bg-secondary' }}">
+                            {{ user.role }}
+                        </span>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('toggle_user_role', user_id=user.id) }}" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-warning">
+                                Cambiar Rol
+                            </button>
+                        </form>
+                        {% if user.id != current_user.id %}
+                        <form method="POST" action="{{ url_for('delete_user', user_id=user.id) }}" class="d-inline" onsubmit="return confirm('¿Eliminar usuario?');">
+                            <button type="submit" class="btn btn-sm btn-danger">Eliminar</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

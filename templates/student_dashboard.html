@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Estudiante - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-home"></i> Bienvenido, {{ current_user.full_name }}
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Quick Actions -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-bolt"></i> Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('book_search') }}" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Buscar Libros
+                    </a>
+                    <a href="{{ url_for('my_loans') }}" class="btn btn-secondary">
+                        <i class="fas fa-book-reader"></i> Mis Préstamos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Active Loans Summary -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-clipboard-list"></i> Préstamos Activos</h5>
+            </div>
+            <div class="card-body">
+                {% if active_loans %}
+                    <p class="text-info"><strong>{{ active_loans|length }}</strong> libros en préstamo</p>
+                    {% for loan in active_loans[:3] %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="text-truncate">{{ loan.book.title }}</span>
+                            <small class="{% if loan.is_overdue %}text-danger{% elif loan.days_remaining <= 2 %}text-warning{% else %}text-muted{% endif %}">
+                                {% if loan.is_overdue %}
+                                    Vencido
+                                {% else %}
+                                    {{ loan.days_remaining }} días
+                                {% endif %}
+                            </small>
+                        </div>
+                    {% endfor %}
+                    {% if active_loans|length > 3 %}
+                        <small class="text-muted">Y {{ active_loans|length - 3 }} más...</small>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted mb-0">No tienes préstamos activos</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Books -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-plus-circle"></i> Libros Añadidos Recientemente</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_books %}
+                    <div class="row">
+                        {% for book in recent_books %}
+                            <div class="col-md-6 col-lg-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">{{ book.title }}</h6>
+                                        <p class="card-text text-muted">{{ book.author }}</p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="badge {% if book.is_available %}bg-success{% else %}bg-danger{% endif %}">
+                                                {% if book.is_available %}
+                                                    Disponible
+                                                {% else %}
+                                                    No disponible
+                                                {% endif %}
+                                            </span>
+                                            <a href="{{ url_for('book_details', book_id=book.id) }}" class="btn btn-sm btn-outline-primary">
+                                                Ver detalles
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No hay libros recientes para mostrar.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

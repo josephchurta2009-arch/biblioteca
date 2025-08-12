@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Gestionar Libros - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="fas fa-books"></i> Gestionar Libros</h1>
+        <a href="{{ url_for('add_book') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Añadir Libro
+        </a>
+    </div>
+</div>
+
+<!-- Search Form -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <form method="GET" action="{{ url_for('manage_books') }}">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <input type="text" class="form-control" name="q" 
+                                   value="{{ search_query }}" placeholder="Buscar por título, autor o ISBN...">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-search"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Books Table -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5>Catálogo de Libros ({{ books|length }} libros)</h5>
+            </div>
+            <div class="card-body">
+                {% if books %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Autor</th>
+                                    <th>Categoría</th>
+                                    <th>Disponibles/Total</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for book in books %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url_for('book_details', book_id=book.id) }}" 
+                                               class="text-decoration-none">
+                                                <strong>{{ book.title }}</strong>
+                                            </a>
+                                            {% if book.isbn %}
+                                                <br><small class="text-muted">ISBN: {{ book.isbn }}</small>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ book.author }}</td>
+                                        <td>{{ book.category or '-' }}</td>
+                                        <td>
+                                            <span class="{% if book.available_copies == 0 %}text-danger{% elif book.available_copies <= 2 %}text-warning{% else %}text-success{% endif %}">
+                                                {{ book.available_copies }}/{{ book.total_copies }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge {% if book.is_available %}bg-success{% else %}bg-danger{% endif %}">
+                                                {% if book.is_available %}Disponible{% else %}No disponible{% endif %}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ url_for('book_details', book_id=book.id) }}" 
+                                                   class="btn btn-outline-info" title="Ver detalles">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('edit_book', book_id=book.id) }}" 
+                                                   class="btn btn-outline-warning" title="Editar">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <form method="POST" action="{{ url_for('delete_book', book_id=book.id) }}" 
+                                                      class="d-inline" 
+                                                      onsubmit="return confirm('¿Estás seguro de que quieres eliminar este libro?')">
+                                                    <button type="submit" class="btn btn-outline-danger" title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No se encontraron libros</h4>
+                        {% if search_query %}
+                            <p class="text-muted">No hay libros que coincidan con "{{ search_query }}"</p>
+                            <a href="{{ url_for('manage_books') }}" class="btn btn-secondary">Ver todos los libros</a>
+                        {% else %}
+                            <p class="text-muted">Aún no hay libros en el catálogo</p>
+                            <a href="{{ url_for('add_book') }}" class="btn btn-primary">Añadir el primer libro</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

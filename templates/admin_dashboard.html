@@ -1,0 +1,117 @@
+
+{% extends "base.html" %}
+
+{% block title %}Panel de Administrador - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-tachometer-alt"></i> Panel de Administrador
+        </h1>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-book fa-2x text-primary mb-2"></i>
+                <h4>{{ total_books }}</h4>
+                <p class="card-text">Total de Libros</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-users fa-2x text-info mb-2"></i>
+                <h4>{{ total_users }}</h4>
+                <p class="card-text">Usuarios Registrados</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-book-reader fa-2x text-success mb-2"></i>
+                <h4>{{ active_loans }}</h4>
+                <p class="card-text">Préstamos Activos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
+                <h4>{{ overdue_loans }}</h4>
+                <p class="card-text">Préstamos Vencidos</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Quick Actions -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-bolt"></i> Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Gestionar
+                    </button>
+                    <ul class="dropdown-menu w-100">
+                        <li><a class="dropdown-item" href="{{ url_for('manage_books') }}">
+                            <i class="fas fa-book"></i> Gestionar Libros</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('manage_loans') }}">
+                            <i class="fas fa-clipboard-list"></i> Gestionar Préstamos</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('manage_users') }}">
+                            <i class="fas fa-users"></i> Gestionar Usuarios</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5><i class="fas fa-history"></i> Actividad Reciente</h5>
+            </div>
+            <div class="card-body">
+                {% if recent_logs %}
+                <ul class="list-group">
+                    {% for log in recent_logs %}
+                    <li class="list-group-item">
+                        <strong>{{ log.user.full_name if log.user else 'Sistema' }}:</strong>
+                        {{ log.action }}
+                        <span class="float-end text-muted">{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted">No hay actividad registrada recientemente.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alerts for overdue loans -->
+{% if overdue_loans > 0 %}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            <strong>Atención:</strong> Hay {{ overdue_loans }} préstamos vencidos que requieren atención.
+            <a href="{{ url_for('manage_loans') }}?status=overdue" class="alert-link">Ver préstamos vencidos</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

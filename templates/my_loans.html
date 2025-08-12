@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Préstamos - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="fas fa-book-reader"></i> Mis Préstamos
+        </h1>
+    </div>
+</div>
+
+<!-- Formulario de Solicitud de Préstamo -->
+<div class="card mb-4" data-aos="fade-up">
+    <div class="card-header bg-primary text-white">
+        <h5><i class="fas fa-plus-circle"></i> Solicitar Nuevo Préstamo</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('create_loan') }}">
+            <div class="row align-items-end">
+                <div class="col-md-8">
+                    <label for="book_id" class="form-label">Selecciona un libro:</label>
+                    <select class="form-select" name="book_id" required>
+                        <option value="" disabled selected>-- Elige un libro --</option>
+                        {% for book in available_books %}
+                            <option value="{{ book.id }}">{{ book.title }} — {{ book.author }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-success w-100">
+                        <i class="fas fa-book-medical"></i> Solicitar Préstamo
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Active Loans -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-clock"></i> Préstamos Activos</h5>
+            </div>
+            <div class="card-body">
+                {% if active_loans %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Libro</th>
+                                    <th>Autor</th>
+                                    <th>Fecha de Préstamo</th>
+                                    <th>Fecha de Vencimiento</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for loan in active_loans %}
+                                    <tr class="{% if loan.is_overdue %}table-danger{% elif loan.days_remaining <= 2 %}table-warning{% endif %}">
+                                        <td>
+                                            <a href="{{ url_for('book_details', book_id=loan.book.id) }}" class="text-decoration-none">
+                                                {{ loan.book.title }}
+                                            </a>
+                                        </td>
+                                        <td>{{ loan.book.author }}</td>
+                                        <td>{{ loan.loan_date.strftime('%d/%m/%Y') }}</td>
+                                        <td>{{ loan.due_date.strftime('%d/%m/%Y') }}</td>
+                                        <td>
+                                            {% if loan.is_overdue %}
+                                                <span class="badge bg-danger">Vencido</span>
+                                            {% elif loan.days_remaining <= 2 %}
+                                                <span class="badge bg-warning text-dark">{{ loan.days_remaining }} días restantes</span>
+                                            {% else %}
+                                                <span class="badge bg-success">{{ loan.days_remaining }} días restantes</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <form method="POST" action="{{ url_for('return_book', loan_id=loan.id) }}" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-success">
+                                                    <i class="fas fa-undo"></i> Devolver
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No tienes préstamos activos</h5>
+                        <p class="text-muted">¡Ve a buscar algunos libros interesantes!</p>
+                        <a href="{{ url_for('book_search') }}" class="btn btn-primary">
+                            <i class="fas fa-search"></i> Buscar Libros
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loan History -->
+{% if returned_loans %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-history"></i> Historial de Préstamos</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Libro</th>
+                                <th>Autor</th>
+                                <th>Fecha de Préstamo</th>
+                                <th>Fecha de Devolución</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for loan in returned_loans %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('book_details', book_id=loan.book.id) }}" class="text-decoration-none">
+                                            {{ loan.book.title }}
+                                        </a>
+                                    </td>
+                                    <td>{{ loan.book.author }}</td>
+                                    <td>{{ loan.loan_date.strftime('%d/%m/%Y') }}</td>
+                                    <td>{{ loan.return_date.strftime('%d/%m/%Y') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
