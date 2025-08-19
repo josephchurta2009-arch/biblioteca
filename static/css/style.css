@@ -2,18 +2,16 @@
    style.css — Unificación colores
    ============================ */
 
-/* Paleta base (defínela una vez y reutilízala) */
+/* Paleta base */
 :root{
-  /* Colores "home" (tema principal que quieres replicar) */
-  --home-bg: #f2fcfe;           /* fondo página principal (muy claro) */
-  --home-hero-start: #6b46ff;   /* degradado superior (inicio) */
-  --home-hero-end: #7c5cff;     /* degradado superior (fin) */
-  --home-navbar-text: #ffffff;  /* texto navbar en home */
-  --home-card-bg: #ffffff;      /* fondo de tarjetas en home */
-  --home-text: #0f1724;         /* color principal de texto (oscuro) */
-  --home-muted: #6b7280;        /* texto secundario */
+  --home-bg: #f2fcfe;           
+  --home-hero-start: #2563eb;   /* azul consistente */
+  --home-hero-end: #1d4ed8;     
+  --home-navbar-text: #ffffff;  
+  --home-card-bg: #ffffff;      
+  --home-text: #0f1724;         
+  --home-muted: #6b7280;        
 
-  /* Valores por defecto del proyecto (se usan si no aplica home) */
   --library-primary: #2563eb;
   --library-secondary: #059669;
   --library-accent: #0891b2;
@@ -28,139 +26,91 @@
 html, body{
   height:100%;
   margin:0;
-  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
 }
 
-/* Por defecto (modo oscuro del tema agent) mantenemos compatibilidad */
 body{
-  background-color: var(--bs-body-bg, #0b1220); /* fallback oscuro si aplica */
-  color: var(--bs-body-color, #cbd5e1);
+  background-color: var(--home-bg);
+  color: var(--home-text);
 }
 
 /* -------------------
-   REGLAS PARA HACER
-   QUE ADMIN/STUDENT COINCIDAN CON HOME
-   (se activan cuando <body> tiene la clase correspondiente)
+   Admin / Student look
    ------------------- */
-
-/* Aplica el look "home" a admin y student */
 body.admin-page,
 body.student-page {
   background-color: var(--home-bg) !important;
   color: var(--home-text) !important;
 }
 
-/* Navbar: usamos el mismo degradado que el home */
-/* Navbar: usar el mismo azul principal que en el base (coincidir con --library-primary) */
-body.admin-page .navbar,
-body.student-page .navbar {
-  /* degradado azul consistente con el theme del proyecto */
-  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
-  /* fallback sólido por si el gradiente no aplica */
-  background-color: #2563eb !important;
-  color: #ffffff !important;
-  box-shadow: none;
-}
-
-/* Asegurar links y branding en blanco para contraste */
-body.admin-page .navbar .nav-link,
-body.student-page .navbar .nav-link,
-body.admin-page .navbar-brand,
-body.student-page .navbar-brand {
-  color: #ffffff !important;
-}
-
-/* Links del navbar legibles */
-body.admin-page .navbar .nav-link,
-body.student-page .navbar .nav-link,
-body.admin-page .navbar-brand,
-body.student-page .navbar-brand {
+/* Navbar: degradado azul homogéneo */
+.navbar {
+  background: linear-gradient(135deg, var(--home-hero-start), var(--home-hero-end)) !important;
   color: var(--home-navbar-text) !important;
 }
-
-/* Branding (logo + texto pequeño) */
-body.admin-page .navbar-brand small,
-body.student-page .navbar-brand small {
+.navbar .nav-link,
+.navbar .navbar-brand {
+  color: var(--home-navbar-text) !important;
+}
+.navbar .navbar-brand small {
   opacity: 0.95;
   color: rgba(255,255,255,0.9) !important;
 }
 
-/* Contenedor principal (cards, paneles) */
-body.admin-page .card,
-body.student-page .card {
+/* Cards */
+.card {
   background-color: var(--home-card-bg) !important;
   color: var(--home-text) !important;
   border: 1px solid rgba(15,23,36,0.06);
   box-shadow: 0 6px 18px rgba(15,23,36,0.04);
 }
-
-/* Headers de tarjeta (bordes / texto) */
-body.admin-page .card-header,
-body.student-page .card-header {
+.card-header {
   background: transparent;
   border-bottom: 1px solid rgba(15,23,36,0.06);
   color: var(--home-text);
 }
 
-/* Texto y elementos */
-body.admin-page p,
-body.admin-page .card-text,
-body.admin-page .table,
-body.student-page p,
-body.student-page .card-text,
-body.student-page .table {
+/* Tablas */
+.table {
   color: var(--home-text);
 }
 
-/* Badges y estados legibles */
-body.admin-page .badge,
-body.student-page .badge {
-  color: #fff;
-}
-
-/* Inputs / selects en estilo home */
-body.admin-page .form-control,
-body.student-page .form-control,
-body.admin-page .form-select,
-body.student-page .form-select {
+/* Formulario */
+.form-control,
+.form-select {
   background-color: #fff;
   color: var(--home-text);
   border: 1px solid rgba(15,23,36,0.08);
 }
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--library-primary);
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
 
-/* Botones: conservamos la paleta pero sobre fondo claro */
-body.admin-page .btn-primary,
-body.student-page .btn-primary {
+/* Botones */
+.btn-primary {
   background-color: var(--library-primary);
   border-color: var(--library-primary);
   color: #fff;
 }
-body.admin-page .btn-secondary,
-body.student-page .btn-secondary {
+.btn-primary:hover {
+  background-color: #1d4ed8;
+}
+.btn-secondary {
   background-color: var(--library-secondary);
   border-color: var(--library-secondary);
   color: #fff;
 }
 
-/* Tarjetas listar actividad reciente: contrate y borde */
-body.admin-page .list-group-item,
-body.student-page .list-group-item {
-  background: #fafafa;
-  border: 1px solid rgba(15,23,36,0.04);
-  color: var(--home-text);
-}
-
-/* Flash messages en home style */
-body.admin-page .alert,
-body.student-page .alert {
+/* Alerts */
+.alert {
   background: #fbfffe;
   color: var(--home-text);
   border-left: 4px solid var(--library-primary);
 }
 
-/* Ajustes para Select2 (que uses) — look claro */
+/* Select2 integrado */
 .select2-container--default .select2-selection--single {
   background-color: #ffffff;
   color: var(--home-text);
@@ -180,24 +130,8 @@ body.student-page .alert {
   color: #fff;
 }
 
-/* -------------------
-   Reglas generales (no-home)
-   ------------------- */
-/* Mantener compatibilidad con tu tema oscuro original */
-:root {
-  --bs-gray-800: #111827;
-}
-
-/* Sutiles mejoras a tarjetas en modo oscuro (si el body NO tiene admin/student) */
-body:not(.admin-page):not(.student-page) .card {
-  background-color: var(--bs-gray-800);
-  color: var(--bs-body-color, #cbd5e1);
-}
-
-/* Media queries y responsive (mantener) */
+/* Responsive */
 @media (max-width: 768px) {
   .hero-section { padding: 2rem 0; }
   .hero-icon { font-size: 3rem; }
 }
-
-/* fin de archivo */
